@@ -1,6 +1,7 @@
 package com.example.tripjournal_project
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,10 +12,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.tripjournal_project.ui.theme.TripJournalprojectTheme
+import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
+        val db = FirebaseFirestore.getInstance()
+        db.document("testuser/18ncw63frXQdnBzs61Dv").get().addOnSuccessListener{
+            Log.v("Logging", it.data?.get("Name").toString())
+        }
         setContent {
             TripJournalprojectTheme {
                 // A surface container using the 'background' color from the theme
