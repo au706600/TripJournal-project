@@ -11,18 +11,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.example.tripjournal_project.ui.theme.TripJournalprojectTheme
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val auth = Firebase.auth
         FirebaseApp.initializeApp(this)
         val db = FirebaseFirestore.getInstance()
-        db.document("testuser/18ncw63frXQdnBzs61Dv").get().addOnSuccessListener{
-            Log.v("Logging", it.data?.get("Name").toString())
-        }
+        // For retrieving the test user data on firebase.
+        //db.document("testuser/18ncw63frXQdnBzs61Dv").get().addOnSuccessListener{
+          //  Log.v("Logging", it.data?.get("Name").toString())
+        //}
+
+        //val service = FireStore(db, auth)
+        auth.currentUser
         setContent {
             TripJournalprojectTheme {
                 // A surface container using the 'background' color from the theme
