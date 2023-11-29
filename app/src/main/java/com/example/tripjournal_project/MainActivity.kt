@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tripjournal_project.ui.theme.TripJournalprojectTheme
 import com.google.firebase.FirebaseApp
@@ -29,16 +31,29 @@ class MainActivity : ComponentActivity() {
           //  Log.v("Logging", it.data?.get("Name").toString())
         //}
 
-        //val service = FireStore(db, auth)
+        val service = Firestore(db, auth)
         auth.currentUser
         setContent {
             TripJournalprojectTheme {
+                val navController = rememberNavController()
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    //Greeting("Android")
+                    NavHost(navController = navController, startDestination = "login")
+                    {
+                        composable("signup")
+                        {
+                            signup(service, nav = navController)
+                        }
+
+                        composable("login")
+                        {
+                            login(service, nav = navController)
+                        }
+                    }
                 }
             }
         }
