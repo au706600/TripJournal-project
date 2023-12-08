@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     //Greeting("Android")
-                    NavHost(navController = navController, startDestination = "Contact us")
+                    NavHost(navController = navController, startDestination = "signup")
                     {
                         composable("signup")
                         {
