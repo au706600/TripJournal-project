@@ -42,6 +42,9 @@ data class Metamodel(
     val contentDescription: String,
     val onClick: () -> Unit
 )
+
+data class user(val id: String, val email: String)
+
 @Composable
 
 fun menuitem(text:String, menuItem: Metamodel)

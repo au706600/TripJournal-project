@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     //Greeting("Android")
-                    NavHost(navController = navController, startDestination = "mainpage")
+                    NavHost(navController = navController, startDestination = "Contact us")
                     {
                         composable("signup")
                         {
@@ -81,6 +81,11 @@ class MainActivity : ComponentActivity() {
                         composable("mainpage")
                         {
                             Mainpage(nav = navController, menuItem = menuItems)
+                        }
+
+                        composable("Contact us")
+                        {
+                            Contact_us()
                         }
                     }
                 }

@@ -1,5 +1,6 @@
 package com.example.tripjournal_project
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,15 +16,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun signup(service: Firestore, nav: NavController)
-{
-    val email = remember{ mutableStateOf("") }
-    val password = remember{ mutableStateOf("") }
+fun signup(service: Firestore, nav: NavController) {
+    val email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
     Column()
@@ -31,15 +35,19 @@ fun signup(service: Firestore, nav: NavController)
         Row()
         {
             Text("Email: ")
-            TextField(value = email.value, onValueChange = {newText -> email.value = newText},
-                modifier = Modifier.fillMaxWidth())
+            TextField(
+                value = email.value, onValueChange = { newText -> email.value = newText },
+                modifier = Modifier.fillMaxWidth()
+            )
         }
         Row()
         {
             Text("Password: ")
-            TextField(value = email.value, onValueChange = { newText -> email.value = newText},
+            TextField(
+                value = email.value, onValueChange = { newText -> email.value = newText },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password))
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+            )
         }
         Button(onClick = {
             scope.launch {
