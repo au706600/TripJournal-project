@@ -87,7 +87,10 @@ fun login(service: Firestore, nav: NavController)
         )
 
         Button(onClick = {
-            nav.navigate("signup")
+            scope.launch {
+                val user = service.login(email.value, password.value)
+                nav.navigate("mainpage")
+            }
         }) {
             Text("Signup")
         }

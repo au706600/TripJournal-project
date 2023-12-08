@@ -1,6 +1,5 @@
 package com.example.tripjournal_project
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,11 +24,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,10 +72,33 @@ fun signup(service: Firestore, nav: NavController) {
         }
         Button(onClick = {
             scope.launch {
-                service.signup(email.value, password.value)
+                val user = service.signup(email.value, password.value)
+                nav.navigate("login")
             }
         }) {
             Text("Signup")
         }
     }
+}
+
+
+public fun getUserprofile()
+{
+    val user = Firebase.auth.currentUser
+    user?.let {
+        val email = it.email
+        val emailVerified = it.isEmailVerified
+
+        val uid = it.uid
+
+    }
+}
+
+public fun addUserToFirebase(uid:String, user: FirebaseUser)
+{
+    val db = FirebaseFirestore.getInstance()
+    db.collection("users").document(uid).set(hashMapOf(
+        "id" to user.uid,
+        "email" to user.email
+    ))
 }
