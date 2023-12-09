@@ -73,6 +73,7 @@ fun login(service: Firestore, nav: NavController)
         Button(onClick = {
             scope.launch {
                 service.login(email.value, password.value)
+                nav.navigate("mainpage")
             }
         }) {
             Text("Login")
@@ -89,7 +90,7 @@ fun login(service: Firestore, nav: NavController)
         Button(onClick = {
             scope.launch {
                 val user = service.login(email.value, password.value)
-                nav.navigate("mainpage")
+                nav.navigate("signup")
             }
         }) {
             Text("Signup")

@@ -36,40 +36,6 @@ import androidx.navigation.NavController
 import com.google.android.engage.common.datamodel.Image
 
 
-data class Metamodel(
-    val id: String,
-    val title: String,
-    val contentDescription: String,
-    val onClick: () -> Unit
-)
-
-data class user(val id: String, val email: String)
-
-@Composable
-
-fun menuitem(text:String, menuItem: Metamodel)
-{
-
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(8.dp))
-    {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,) {
-            //Icon(contentDescription = null, tint = Color.White)
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(text = text,
-                color = Color.White,
-                style = MaterialTheme.typography.headlineSmall,
-                fontSize = 20.sp)
-        }
-    }
-
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Mainpage(nav: NavController, menuItem: List<Metamodel>)
