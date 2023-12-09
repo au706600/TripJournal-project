@@ -38,7 +38,7 @@ import com.google.android.engage.common.datamodel.Image
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Mainpage(nav: NavController, menuItem: List<Metamodel>)
+fun Mainpage(menuItem: List<Metamodel>, onMenuItemClick: (Metamodel) -> Unit)
 {
     MaterialTheme {
         Surface(color = MaterialTheme.colorScheme.background)
@@ -49,8 +49,13 @@ fun Mainpage(nav: NavController, menuItem: List<Metamodel>)
                     .padding(16.dp)
                     .fillMaxHeight()
                     .width(120.dp)) {
-                    menuItem.forEach {
-                        menuItem -> menuitem(menuItem.title, menuItem = menuItem)
+                    LazyColumn(Modifier.background(color = MaterialTheme.colorScheme.primary)) {
+
+                        items(menuItem) { item ->
+                            menuitem(MenuItem = item) {
+                                onMenuItemClick(item)
+                            }
+                        }
                     }
                 }
 

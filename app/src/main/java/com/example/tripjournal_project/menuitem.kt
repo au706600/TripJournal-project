@@ -1,5 +1,6 @@
 package com.example.tripjournal_project
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -25,7 +26,7 @@ data class Metamodel(
 
 @Composable
 
-fun menuitem(text:String, menuItem: Metamodel)
+fun menuitem(MenuItem: Metamodel, navigate: () -> Unit)
 {
 
     Box(modifier = Modifier
@@ -34,12 +35,16 @@ fun menuitem(text:String, menuItem: Metamodel)
     {
         Row(modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp).
+            clickable {
+                      MenuItem.onClick()
+                navigate()
+            },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,) {
             //Icon(contentDescription = null, tint = Color.White)
             Spacer(modifier = Modifier.width(4.dp))
-            Text(text = text,
+            Text(text = MenuItem.title,
                 color = Color.White,
                 style = MaterialTheme.typography.headlineSmall,
                 fontSize = 20.sp)

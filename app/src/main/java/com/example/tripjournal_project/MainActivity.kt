@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     //Greeting("Android")
-                    NavHost(navController = navController, startDestination = "login")
+                    NavHost(navController = navController, startDestination = "mainpage")
                     {
                         composable("signup")
                         {
@@ -83,12 +83,34 @@ class MainActivity : ComponentActivity() {
 
                         composable("mainpage")
                         {
-                            Mainpage(nav = navController, menuItem = menuItems)
+                            Mainpage(menuItem = menuItems, onMenuItemClick = {
+                                selectedItem -> when (selectedItem.id)
+                            {
+                                    "1" -> {
+                                        navController.navigate("share")
+                                    }
+
+                                "2" -> {
+                                    navController.navigate("My Journeys")
+                                }
+
+                                "3" -> {
+                                    navController.navigate("Contact us")
+                                }
+
+                                "4" -> {
+                                    navController.navigate("Log out")
+                                }
+                                }
+                            })
                         }
 
                         composable("Contact us")
                         {
                             Contact_us()
+                            {
+                                navController.popBackStack("mainpage", inclusive = false)
+                            }
                         }
                     }
                 }
