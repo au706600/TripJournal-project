@@ -8,8 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -33,7 +37,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun signup(service: Firestore, nav: NavController) {
+fun signup(service: Firestore, nav: NavController, back: () -> Unit) {
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
@@ -44,12 +48,24 @@ fun signup(service: Firestore, nav: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally)
     {
 
-        TopAppBar(title = { Text(text = "Sign up", modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentSize(Alignment.Center)) },
-            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.DarkGray,
-                titleContentColor = Color(0xFFD0BCFF)
-            ))
+        TopAppBar(title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { back() }) {
+                    Icon(Icons.Filled.ArrowBack, contentDescription = "back")
+                }
+                Text(
+                    text = "Sign up",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.Center)
+                )
+            }
+        }, colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.DarkGray,
+            titleContentColor = Color(0xFFD0BCFF))
+        )
 
         Spacer(modifier = Modifier.height(15.dp))
 

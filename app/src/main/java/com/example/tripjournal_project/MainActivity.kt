@@ -71,6 +71,9 @@ class MainActivity : ComponentActivity() {
                         composable("signup")
                         {
                             signup(service, nav = navController)
+                            {
+                                navController.popBackStack("login", inclusive = false)
+                            }
                         }
 
                         composable("login")
