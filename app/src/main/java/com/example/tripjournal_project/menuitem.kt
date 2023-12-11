@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 
 data class Metamodel(
     val id: String,
@@ -24,6 +27,16 @@ data class Metamodel(
     val onClick: () -> Unit
 )
 
+data class Journey(val name: String)
+
+class JourneyViewModel : ViewModel() {
+    private val _journeys = mutableStateOf(listOf<Journey>())
+    val journeys: State<List<Journey>> = _journeys
+
+    fun addJourney(journey: Journey) {
+        _journeys.value = _journeys.value + journey
+    }
+}
 @Composable
 
 fun menuitem(MenuItem: Metamodel, navigate: () -> Unit)

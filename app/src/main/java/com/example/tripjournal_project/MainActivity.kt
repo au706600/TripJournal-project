@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -63,6 +64,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             TripJournalprojectTheme {
                 val navController = rememberNavController()
+                val journeyViewModel: JourneyViewModel = viewModel()
+
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -116,7 +119,7 @@ class MainActivity : ComponentActivity() {
 
                         composable("My Journeys")
                         {
-                            MyJourneys(navController = navController)
+                            MyJourneys(navController = navController, journeyViewModel = journeyViewModel)
                             {
                                 navController.popBackStack("mainpage", inclusive = false)
                             }
@@ -124,7 +127,7 @@ class MainActivity : ComponentActivity() {
 
                         composable("Add Journey")
                         {
-                            AddJourney(navController = navController) {
+                            AddJourney(navController = navController, journeyViewModel = journeyViewModel) {
                                 navController.popBackStack("My Journeys", inclusive = false)
                             }
                         }
