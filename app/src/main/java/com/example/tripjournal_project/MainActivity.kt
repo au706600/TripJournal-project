@@ -1,8 +1,10 @@
 package com.example.tripjournal_project
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -26,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
+        @SuppressLint("StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val auth = Firebase.auth
@@ -87,7 +90,7 @@ class MainActivity : ComponentActivity() {
                                 selectedItem -> when (selectedItem.id)
                             {
                                     "1" -> {
-                                        navController.navigate("share")
+                                        navController.navigate("Share")
                                     }
 
                                 "2" -> {
@@ -99,11 +102,33 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 "4" -> {
-                                    navController.navigate("Log out")
+                                    navController.navigate("login") // Logging out
                                 }
                                 }
                             })
                         }
+
+
+                        composable("Share")
+                        {
+                            ShareButton()
+                        }
+
+                        composable("My Journeys")
+                        {
+                            MyJourneys(navController = navController)
+                            {
+                                navController.popBackStack("mainpage", inclusive = false)
+                            }
+                        }
+
+                        composable("Add Journey")
+                        {
+                            AddJourney(navController = navController) {
+                                navController.popBackStack("My Journeys", inclusive = false)
+                            }
+                        }
+
 
                         composable("Contact us")
                         {
@@ -112,6 +137,7 @@ class MainActivity : ComponentActivity() {
                                 navController.popBackStack("mainpage", inclusive = false)
                             }
                         }
+
                     }
                 }
             }

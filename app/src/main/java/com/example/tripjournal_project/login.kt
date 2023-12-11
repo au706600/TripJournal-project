@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -61,12 +62,12 @@ fun login(service: Firestore, nav: NavController)
             TextField(value = email.value, onValueChange = {newText -> email.value = newText},
                 modifier = Modifier.fillMaxWidth())
         }
-
+       // AIzaSyDTj6KiqLGH_5J1VhbtwAIiqe2j8h720AU
         Row()
         {
             Text("Password: ")
             TextField(value = password.value, onValueChange = {newText -> password.value = newText},
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(), visualTransformation =  PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
         }
