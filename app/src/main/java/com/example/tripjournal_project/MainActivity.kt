@@ -127,8 +127,15 @@ class MainActivity : ComponentActivity() {
 
                         composable("Add Journey")
                         {
-                            AddJourney(navController = navController, journeyViewModel = journeyViewModel) {
+                            AddJourney(navController = navController) {
                                 navController.popBackStack("My Journeys", inclusive = false)
+                            }
+                        }
+
+                        composable("Journeys")
+                        {
+                            Journeys(navController = navController, journeyViewModel = journeyViewModel) {
+                                navController.popBackStack("Add Journey", inclusive = false)
                             }
                         }
 

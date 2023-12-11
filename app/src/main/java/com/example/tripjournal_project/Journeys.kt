@@ -34,9 +34,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddJourney(navController: NavController, back:()->Unit) {
+fun Journeys(navController: NavController, journeyViewModel: JourneyViewModel, back:()-> Unit)
+{
     val scope = rememberCoroutineScope()
-    var text by remember { mutableStateOf(TextFieldValue("")) }
+    var text by remember{ mutableStateOf(TextFieldValue("")) }
+    var Text by remember{ mutableStateOf(TextFieldValue("")) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,7 +57,7 @@ fun AddJourney(navController: NavController, back:()->Unit) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "back")
                     }
                     Text(
-                        text = "Add Journey",
+                        text = "Journeys",
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center)
@@ -67,14 +69,33 @@ fun AddJourney(navController: NavController, back:()->Unit) {
             )
         )
 
-        TextField(value = text, onValueChange = {newValue -> text = newValue},
-            modifier = Modifier.padding(8.dp).fillMaxWidth(), placeholder = {Text("Name of Journey")})
+        Row()
+        {
+            TextField(value = text, onValueChange = { newValue -> text = newValue },
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(), placeholder = { Text("Add location") })
+        }
+
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(15.dp))
+
+        Row()
+        {
+            TextField(value = Text,
+                onValueChange = { newValue -> Text = newValue },
+                modifier = Modifier.padding(8.dp).fillMaxWidth(),
+                placeholder = { Text("Add Description") })
+        }
 
         Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
 
         Button(onClick = {
+            val newJourney = Journey(text.text)
+            journeyViewModel.addJourney(newJourney)
             scope.launch {
-                navController.navigate("Journeys")
+                navController.navigate("My Journeys")
             }
         }) {
             Text("Save")
