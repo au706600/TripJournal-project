@@ -1,6 +1,7 @@
 package com.example.tripjournal_project
 
 import android.annotation.SuppressLint
+import android.location.Geocoder
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,15 +24,26 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tripjournal_project.ui.theme.TripJournalprojectTheme
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import java.time.LocalDateTime
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
+    private lateinit var mapsClient: FusedLocationProviderClient
+    private lateinit var geoCoder: Geocoder
+    private lateinit var service: LocationService
         @SuppressLint("StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mapsClient = LocationServices.getFusedLocationProviderClient(this)
+        geoCoder = Geocoder(this, Locale.getDefault())
+        service = LocationService(this, mapsClient, geoCoder)
+        service.requestPermission()
         val auth = Firebase.auth
         FirebaseApp.initializeApp(this)
         val db = FirebaseFirestore.getInstance()
@@ -39,7 +51,6 @@ class MainActivity : ComponentActivity() {
         //db.document("testuser/18ncw63frXQdnBzs61Dv").get().addOnSuccessListener{
           //  Log.v("Logging", it.data?.get("Name").toString())
         //}
-
         val service = Firestore(db, auth)
         auth.currentUser
 
@@ -72,7 +83,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     //Greeting("Android")
-                    NavHost(navController = navController, startDestination = "mainpage")
+                    NavHost(navController = navController, startDestination = "Add Journey")
                     {
                         composable("signup")
                         {
@@ -139,6 +150,13 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
+                        composable("Map")
+                        {
+                            //val journeypoint = Journeypoints(1, "trip points", LocalDateTime.now())
+                            Map() {
+                                navController.popBackStack("Add Journey", inclusive = false)
+                            }
+                        }
 
                         composable("Contact us")
                         {
@@ -152,21 +170,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TripJournalprojectTheme {
-        Greeting("Android")
     }
 }

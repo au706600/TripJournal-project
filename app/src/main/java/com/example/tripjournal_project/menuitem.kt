@@ -1,5 +1,6 @@
 package com.example.tripjournal_project
 
+import android.location.Location
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +28,10 @@ data class Metamodel(
     val onClick: () -> Unit
 )
 
+
 data class Journey(val name: String)
+
+data class trippoints(val location: Location)
 
 class JourneyViewModel : ViewModel() {
     private val _journeys = mutableStateOf(listOf<Journey>())
