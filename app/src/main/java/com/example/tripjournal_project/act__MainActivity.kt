@@ -17,15 +17,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tripjournal_project.ui.theme.TripJournalprojectTheme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 import java.util.Locale
 
 
 object JourneyData {
-    val JourneyList = generateStaticData()
+    val JourneyList = generateTestingData()
 }
 
 class MainActivity : ComponentActivity() {

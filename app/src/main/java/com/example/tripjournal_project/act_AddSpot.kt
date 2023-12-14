@@ -89,6 +89,13 @@ fun AddSpot(
             Text("Select Location")
         }
 
+        Text(text = "Latitude: ".plus(locationParam.latitude))
+        Text(text = "Longitude: ".plus(locationParam.longitude))
+
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(10.dp))
+
         Row()
         {
             TextField(value = nameText, onValueChange = { newValue -> nameText = newValue },
@@ -110,7 +117,7 @@ fun AddSpot(
         }
 
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(35.dp))
+        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
 
         Button(onClick = {
             // Waiting for current location job to be completed

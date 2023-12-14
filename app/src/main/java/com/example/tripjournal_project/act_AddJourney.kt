@@ -94,10 +94,22 @@ fun AddJourney(navController: NavController,
             Text("Select Location")
         }
 
-        TextField(value = journeyNameText, onValueChange = { newValue -> journeyNameText = newValue},
-            modifier = Modifier.padding(8.dp).fillMaxWidth(), placeholder = {Text("Name of Journey")})
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
+        Text(text = "Latitude: ".plus(locationParam.latitude))
+        Text(text = "Longitude: ".plus(locationParam.longitude))
+
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(10.dp))
+
+        TextField(value = journeyNameText, onValueChange = { newValue -> journeyNameText = newValue},
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(), placeholder = {Text("Name of Journey")})
+
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(15.dp))
 
         Button(onClick = {
             //runBlocking { currentLocationJob.join() }
@@ -115,7 +127,9 @@ fun AddJourney(navController: NavController,
             Text("Save")
         }
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(15.dp))
 
 
     }
