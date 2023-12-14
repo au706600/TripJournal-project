@@ -1,19 +1,14 @@
 package com.example.tripjournal_project
 
-import android.content.Intent
-import android.content.Intent.ACTION_SEND
-import android.content.Intent.EXTRA_SUBJECT
-import android.content.Intent.EXTRA_TEXT
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import android.location.Location
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,12 +19,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShareButton(back:()-> Unit) {
-    val context = LocalContext.current
+
+fun JourneyMapLocationFinder(
+    JourneysList: ArrayList<tourney>,
+    activeJourneyID: activeJourneyID,
+    locationParam: Location,
+    back:() -> Unit) {
+
+    val centerCoordinates = LatLng(locationParam.latitude, locationParam.longitude)
+    val selectionMarkerState = rememberMarkerState(position = centerCoordinates)
 
     Column(
         modifier = Modifier
@@ -45,11 +52,16 @@ fun ShareButton(back:()-> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { back() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "back")
+                    IconButton(onClick = {
+                        locationParam.latitude = selectionMarkerState.position.latitude
+                        locationParam.longitude = selectionMarkerState.position.longitude
+
+                        back()
+                    }) {
+                        Icon(Icons.Filled.Check, contentDescription = "back")
                     }
                     Text(
-                        text = "Add Journey",
+                        text = "Select Location",
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center)
@@ -60,25 +72,20 @@ fun ShareButton(back:()-> Unit) {
                 titleContentColor = Color(0xFFD0BCFF)
             )
         )
+        val cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(centerCoordinates, 15f)
+        }
 
-        val launcher =
-            rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                // Handle the result if needed
-            }
+        GoogleMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,)
+        {
+            Marker(
+                state = selectionMarkerState,
+                title = "Selection Marker",
+                draggable = true
+            )
 
-        Button(
-            onClick = {
-                val shareIntent = Intent(ACTION_SEND)
-                shareIntent.type = "text/plain"
-                shareIntent.putExtra(EXTRA_SUBJECT, "Subject")
-                shareIntent.putExtra(EXTRA_TEXT, "Your shared text here.")
-
-                val chooser = Intent.createChooser(shareIntent, "Share")
-
-                launcher.launch(chooser)
-            }
-        ) {
-            Text("Share")
         }
     }
 }

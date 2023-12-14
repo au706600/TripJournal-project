@@ -10,6 +10,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
+import java.time.LocalDateTime
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -19,6 +20,7 @@ class LocationService(
     private val context: androidx.activity.ComponentActivity,
     private val client: FusedLocationProviderClient,
     private val geocoder: Geocoder
+    //private val viewModel: SharedViewmodel
 ) {
     var locationOn: Boolean = false
     private var launcher: ActivityResultLauncher<String>
@@ -36,7 +38,8 @@ class LocationService(
         return suspendCoroutine { continuation ->
             try{
                 client.getCurrentLocation(LocationRequest.QUALITY_HIGH_ACCURACY, null)
-                    .addOnSuccessListener { continuation.resume(it) }.addOnFailureListener {
+                    .addOnSuccessListener { continuation.resume(it)
+                    //viewModel.journeyPoints.value?.addLocation(LocalDateTime.now(), it)}.addOnFailureListener {
                         Log.v(TAG_SERVICE, "The location request failed")
                     }
             } catch (e: SecurityException)

@@ -13,12 +13,17 @@ class Journeypoints(val id: Long, val name: String, val start: LocalDateTime)
     val tags = mutableListOf<trippoints>()
 
     fun firstPosition(): LatLng {
-        return LatLng(tags.first().location.latitude,tags.first().location.longitude)
+        if (tags.isNotEmpty()) {
+            return LatLng(tags.first().location.latitude, tags.first().location.longitude)
+        } else {
+            return LatLng(56.154826, 10.212434)
+        }
     }
     fun toLatLng(): List<LatLng> {
         return tags.map { LatLng(it.location.latitude, it.location.longitude) }
     }
 
+    /*
     fun addLocation(time: LocalDateTime, location: Location) {
         if (tags.isEmpty() || location.distanceTo(tags.last().location) >= MIN_DIST) {
             tags.add(trippoints(location))
@@ -28,5 +33,6 @@ class Journeypoints(val id: Long, val name: String, val start: LocalDateTime)
             throw IllegalStateException("error")
     }
 
-}
+     */
+
 }

@@ -1,7 +1,5 @@
 package com.example.tripjournal_project
 
-import android.annotation.SuppressLint
-import android.app.Application
 import android.location.Location
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,33 +30,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 
-class SharedViewmodel: ViewModel()
-{
-    val userlocation = MutableLiveData<Location>()
-}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddJourney(navController: NavController,
-               JourneysList: ArrayList<tourney>,
-               locationService: LocationService,
-               locationParam: Location,
-               back:()->Unit) {
+fun AddSpot(
+    navController: NavController,
+    journeyViewModel: JourneyViewModel,
+    JourneysList: ArrayList<tourney>,
+    activeJourneyID: activeJourneyID,
+    locationService: LocationService,
+    locationParam: Location,
+    back:()-> Unit)
+{
     val scope = rememberCoroutineScope()
-    var journeyNameText by remember { mutableStateOf(TextFieldValue("")) }
-    var location by remember{ mutableStateOf<Location?>(null) }
-
-    val returnLocation = Location("")
-
-    // var currentLocation = runBlocking { locationService.getCurrentLocation(Location("")) }
-    //var currentLocationJob = runBlocking { launch { locationService.getCurrentLocation(currentLocation) } }
+    var nameText by remember{ mutableStateOf(TextFieldValue("")) }
+    var activityText by remember{ mutableStateOf(TextFieldValue("")) }
+    var returnLocation = Location("")
+    // var currentLocationJob = runBlocking { launch { locationService.getCurrentLocation(currentLocation) } }
 
     Column(
         modifier = Modifier
@@ -78,7 +68,7 @@ fun AddJourney(navController: NavController,
                         Icon(Icons.Filled.ArrowBack, contentDescription = "back")
                     }
                     Text(
-                        text = "Add Journey",
+                        text = "Journeys",
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center)
@@ -91,38 +81,55 @@ fun AddJourney(navController: NavController,
         )
 
         Button(onClick = {
-            navController.navigate("JourneyMapLocationFinder")
+            navController.navigate("SpotMapLocationFinder")
         }
         )
         {
             Text("Select Location")
         }
 
-        TextField(value = journeyNameText, onValueChange = { newValue -> journeyNameText = newValue},
-            modifier = Modifier.padding(8.dp).fillMaxWidth(), placeholder = {Text("Name of Journey")})
+        Row()
+        {
+            TextField(value = nameText, onValueChange = { newValue -> nameText = newValue },
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(), placeholder = { Text("Add spot name") })
+        }
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(15.dp))
+
+        Row()
+        {
+            TextField(value = activityText,
+                onValueChange = { newValue -> activityText = newValue },
+                modifier = Modifier.padding(8.dp).fillMaxWidth(),
+                placeholder = { Text("Add activity description") })
+        }
+
+
+        Spacer(modifier = Modifier.fillMaxWidth().height(35.dp))
 
         Button(onClick = {
-            //runBlocking { currentLocationJob.join() }
+            // Waiting for current location job to be completed
+            // runBlocking { currentLocationJob.join() }
             returnLocation.latitude = locationParam.latitude
             returnLocation.longitude = locationParam.longitude
-            JourneysList.add(tourney(
-                name = journeyNameText.text,
-                location = returnLocation,
-                spots = ArrayList<Spot>()))
-
+            val newSpot = Spot(
+                nameText.text,
+                activityText.text,
+                returnLocation
+            )
+            JourneysList[activeJourneyID.ID].spots.add(newSpot)
             scope.launch {
-                navController.navigate("My Journeys")
+                navController.navigate("JourneyView")
             }
-
-        }) {
+        }
+        )
+        {
             Text("Save")
         }
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
-
-
     }
 }
-

@@ -14,6 +14,7 @@ fun LocationWidget(service: LocationService) {
     val location = remember {
         mutableStateOf<Location?>(null)
     }
+
     LaunchedEffect(key1 = Unit) {
         location.value = service.getCurrentLocation()
     }

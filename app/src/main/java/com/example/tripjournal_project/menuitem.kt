@@ -21,23 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 
-data class Metamodel(
-    val id: String,
-    val title: String,
-    val contentDescription: String,
-    val onClick: () -> Unit
-)
-
-
-data class Journey(val name: String)
-
-data class trippoints(val location: Location)
-
 class JourneyViewModel : ViewModel() {
-    private val _journeys = mutableStateOf(listOf<Journey>())
-    val journeys: State<List<Journey>> = _journeys
+    private val _journeys = mutableStateOf(listOf<tourney>())
+    val journeys: State<List<tourney>> get()= _journeys
 
-    fun addJourney(journey: Journey) {
+    fun addJourney(journey: tourney) {
         _journeys.value = _journeys.value + journey
     }
 }

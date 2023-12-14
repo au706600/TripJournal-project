@@ -1,5 +1,6 @@
 package com.example.tripjournal_project
 
+import android.location.Location
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +35,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Journeys(navController: NavController, journeyViewModel: JourneyViewModel, back:()-> Unit)
+fun Journeys(navController: NavController, viewmodel: SharedViewmodel,journeyViewModel: JourneyViewModel, back:()-> Unit)
 {
     val scope = rememberCoroutineScope()
     var text by remember{ mutableStateOf(TextFieldValue("")) }
@@ -92,7 +93,11 @@ fun Journeys(navController: NavController, journeyViewModel: JourneyViewModel, b
         Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
 
         Button(onClick = {
-            val newJourney = Journey(text.text)
+            val newJourney = tourney(
+                name = text.text,
+                location = viewmodel.userlocation.value ?: Location(""),
+                spots = ArrayList<Spot>()
+            )
             journeyViewModel.addJourney(newJourney)
             scope.launch {
                 navController.navigate("My Journeys")

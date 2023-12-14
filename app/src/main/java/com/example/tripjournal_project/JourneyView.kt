@@ -1,16 +1,15 @@
 package com.example.tripjournal_project
 
-import android.annotation.SuppressLint
-import android.app.Application
-import android.location.Location
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -18,10 +17,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,44 +29,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 
-class SharedViewmodel: ViewModel()
-{
-    val userlocation = MutableLiveData<Location>()
-}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddJourney(navController: NavController,
-               JourneysList: ArrayList<tourney>,
-               locationService: LocationService,
-               locationParam: Location,
-               back:()->Unit) {
+
+fun JourneyView(
+    navController: NavController,
+    JourneysList : ArrayList<tourney>,
+    journeyViewModel: JourneyViewModel,
+    activeJourneyID: activeJourneyID,
+    back:()->Unit)
+{
+    val journeyIndex = activeJourneyID.ID
+
     val scope = rememberCoroutineScope()
-    var journeyNameText by remember { mutableStateOf(TextFieldValue("")) }
-    var location by remember{ mutableStateOf<Location?>(null) }
-
-    val returnLocation = Location("")
-
-    // var currentLocation = runBlocking { locationService.getCurrentLocation(Location("")) }
-    //var currentLocationJob = runBlocking { launch { locationService.getCurrentLocation(currentLocation) } }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    )
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally)
     {
-
         TopAppBar(
             title = {
                 Row(
@@ -78,7 +61,7 @@ fun AddJourney(navController: NavController,
                         Icon(Icons.Filled.ArrowBack, contentDescription = "back")
                     }
                     Text(
-                        text = "Add Journey",
+                        text = JourneysList[journeyIndex].name,
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center)
@@ -90,39 +73,55 @@ fun AddJourney(navController: NavController,
             )
         )
 
-        Button(onClick = {
-            navController.navigate("JourneyMapLocationFinder")
-        }
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(20.dp)
+            .background(color = Color.White)
         )
-        {
-            Text("Select Location")
-        }
-
-        TextField(value = journeyNameText, onValueChange = { newValue -> journeyNameText = newValue},
-            modifier = Modifier.padding(8.dp).fillMaxWidth(), placeholder = {Text("Name of Journey")})
-
-        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
 
         Button(onClick = {
-            //runBlocking { currentLocationJob.join() }
-            returnLocation.latitude = locationParam.latitude
-            returnLocation.longitude = locationParam.longitude
-            JourneysList.add(tourney(
-                name = journeyNameText.text,
-                location = returnLocation,
-                spots = ArrayList<Spot>()))
-
             scope.launch {
-                navController.navigate("My Journeys")
+                navController.navigate("Add Spot")
             }
-
-        }) {
-            Text("Save")
+        })
+        {
+            Text("Add Spot")
         }
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(20.dp)
+            .background(color = Color.White)
+        )
 
 
+        LazyColumn(modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.LightGray)
+        ) {
+            items(JourneysList[journeyIndex].spots) { spot ->
+                Text(text = spot.name)
+                Text(text = spot.activity)
+                Spacer(modifier = Modifier
+                    .background(color = Color.White)
+                    .fillMaxWidth()
+                    .height(20.dp))
+            }
+        }
+
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(20.dp)
+            .background(color = Color.White)
+        )
+
+
+        Button(onClick = {
+            scope.launch {
+                navController.navigate("Map")
+            }
+        }) {
+            Text("Show Map")
+        }
     }
 }
-

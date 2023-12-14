@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,8 +33,14 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 
-fun Map(back:() -> Unit) {
-    val aarhus = LatLng(56.154826, 10.212434)
+fun Map(activeJourneyID: activeJourneyID, Spots: ArrayList<tourney>, location: Location,back:() -> Unit) {
+    //val aarhus = LatLng(56.154826, 10.212434)
+
+    val journey = Spots[activeJourneyID.ID]
+    val journeyLocation = journey.location
+    val journeyCoordinates = LatLng(journeyLocation.latitude, journeyLocation.longitude)
+    val spotsList = journey.spots
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -63,24 +71,24 @@ fun Map(back:() -> Unit) {
             )
         )
         val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(aarhus , 15f)
+            position = CameraPosition.fromLatLngZoom(journeyCoordinates, 15f)
         }
 
         GoogleMap(modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState) {
+            val pointslist = ArrayList<LatLng>()
 
-            Polyline(color = Color.Magenta, pattern = listOf(Dash(2f)),
-                points = listOf(LatLng(56.154826, 10.212434),
-                    LatLng(56.155826, 10.220434),
-                    LatLng(56.158926, 10.232434),
-                    LatLng(56.161326, 10.242434)
-                ))
+            for (journey in spotsList) {
+                pointslist.add(LatLng(journey.location.latitude, journey.location.longitude))
+                Polyline(color = Color.Magenta, pattern = listOf(Dash(2f)),
+                    points = pointslist
+                )
 
-
-            Marker(
-                state = MarkerState(position = aarhus),
-                title = "Test",
-                snippet = "Marker in: Test"
-            )
+                Marker(
+                    state = MarkerState(position = LatLng(journey.location.latitude, journey.location.longitude)),
+                    title = journey.name,
+                    snippet = "Marker in: ${journey.name}"
+                )
+            }
         }
     }
 }
