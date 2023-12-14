@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         service.requestPermission()
 
             // Contains saved journey data
-        val JourneysList = ArrayList<Journey>()
+        val JourneysList = generateTestingData()
             // Used to access the right index of the journeys list
         val activeJourneyID = activeJourneyID(ID = 0)
             // Used to pass location data between activities. Should be current location
@@ -104,7 +104,10 @@ class MainActivity : ComponentActivity() {
 
                         composable("Share")
                         {
-                            ShareButton()
+                            ShareButton(
+                                JourneysList = JourneysList,
+                                activeJourneyID = activeJourneyID
+                            )
                         }
 
                         composable("My Journeys")

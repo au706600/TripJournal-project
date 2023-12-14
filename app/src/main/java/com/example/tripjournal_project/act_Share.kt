@@ -12,7 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
-fun ShareButton() {
+fun ShareButton(
+    JourneysList: ArrayList<Journey>,
+    activeJourneyID: activeJourneyID
+) {
     val context = LocalContext.current
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -21,11 +24,24 @@ fun ShareButton() {
 
     Button(
         onClick = {
+            val journey = JourneysList[activeJourneyID.ID]
+
+
             // Share intent
             val shareIntent = Intent(ACTION_SEND)
             shareIntent.type = "text/plain"
-            shareIntent.putExtra(EXTRA_SUBJECT, "Subject")
-            shareIntent.putExtra(EXTRA_TEXT, "Your shared text here.")
+            shareIntent.putExtra(EXTRA_SUBJECT, "A trip to ".plus(journey.name))
+
+            val shareString = "A trip to ".plus(journey.name).plus("\n\nWith stops in:\n")
+
+            for(spot in journey.spots) {
+                shareString
+                    .plus("Spot: ").plus(spot.name)
+                    .plus("\nActivity: ").plus(spot.activity)
+                    .plus("\n")
+            }
+
+            shareIntent.putExtra(EXTRA_TEXT, shareString)
 
             // Create a chooser dialog
             val chooser = Intent.createChooser(shareIntent, "Share via")
