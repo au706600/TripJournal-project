@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,19 +20,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.Dash
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 
-fun Map(back:() -> Unit) {
-    val aarhus = LatLng(56.154826, 10.212434)
+fun JourneyMapLocationFinder(
+    JourneysList: ArrayList<Journey>,
+    activeJourneyID: activeJourneyID,
+    locationParam: Location,
+    back:() -> Unit) {
+
+    val centerCoordinates = LatLng(locationParam.latitude, locationParam.longitude)
+    val selectionMarkerState = rememberMarkerState(position = centerCoordinates)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -47,11 +52,16 @@ fun Map(back:() -> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { back() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "back")
+                    IconButton(onClick = {
+                        locationParam.latitude = selectionMarkerState.position.latitude
+                        locationParam.longitude = selectionMarkerState.position.longitude
+
+                        back()
+                    }) {
+                        Icon(Icons.Filled.Check, contentDescription = "back")
                     }
                     Text(
-                        text = "Add Journey",
+                        text = "Select Location",
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center)
@@ -63,24 +73,19 @@ fun Map(back:() -> Unit) {
             )
         )
         val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(aarhus , 15f)
+            position = CameraPosition.fromLatLngZoom(centerCoordinates, 15f)
         }
 
-        GoogleMap(modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState) {
-
-            Polyline(color = Color.Magenta, pattern = listOf(Dash(2f)),
-                points = listOf(LatLng(56.154826, 10.212434),
-                    LatLng(56.155826, 10.220434),
-                    LatLng(56.158926, 10.232434),
-                    LatLng(56.161326, 10.242434)
-                ))
-
-
+        GoogleMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,)
+        {
             Marker(
-                state = MarkerState(position = aarhus),
-                title = "Test",
-                snippet = "Marker in: Test"
+                state = selectionMarkerState,
+                title = "Selection Marker",
+                draggable = true
             )
+
         }
     }
 }

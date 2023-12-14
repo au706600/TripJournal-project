@@ -32,11 +32,19 @@ class LocationService(
         }
     }
 
-    suspend fun getCurrentLocation(): Location {
+    suspend fun getCurrentLocation(locationObject: Location): Location {
         return suspendCoroutine { continuation ->
             try{
                 client.getCurrentLocation(LocationRequest.QUALITY_HIGH_ACCURACY, null)
-                    .addOnSuccessListener { continuation.resume(it) }.addOnFailureListener {
+                    .addOnSuccessListener {
+                        // Suboptimal (?) but direct solution:
+                        locationObject.latitude = it.latitude
+                        locationObject.longitude = it.longitude
+
+                        // No idea how to retrieve return value
+                        continuation.resume(it)
+                    }
+                    .addOnFailureListener {
                         Log.v(TAG_SERVICE, "The location request failed")
                     }
             } catch (e: SecurityException)

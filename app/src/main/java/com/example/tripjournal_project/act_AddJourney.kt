@@ -1,5 +1,6 @@
 package com.example.tripjournal_project
 
+import android.location.Location
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,16 +30,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
+class SharedViewmodel: ViewModel()
+{
+    val userlocation = MutableLiveData<Location>()
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Journeys(navController: NavController, journeyViewModel: JourneyViewModel, back:()-> Unit)
-{
+fun AddJourney(navController: NavController,
+               JourneysList: ArrayList<Journey>,
+               locationService: LocationService,
+               locationParam: Location,
+               back:()->Unit) {
     val scope = rememberCoroutineScope()
-    var text by remember{ mutableStateOf(TextFieldValue("")) }
-    var Text by remember{ mutableStateOf(TextFieldValue("")) }
+    var journeyNameText by remember { mutableStateOf(TextFieldValue("")) }
+    var location by remember{ mutableStateOf<Location?>(null) }
+
+    val returnLocation = Location("")
+
+    // var currentLocation = runBlocking { locationService.getCurrentLocation(Location("")) }
+    //var currentLocationJob = runBlocking { launch { locationService.getCurrentLocation(currentLocation) } }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -57,7 +74,7 @@ fun Journeys(navController: NavController, journeyViewModel: JourneyViewModel, b
                         Icon(Icons.Filled.ArrowBack, contentDescription = "back")
                     }
                     Text(
-                        text = "Journeys",
+                        text = "Add Journey",
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center)
@@ -69,37 +86,37 @@ fun Journeys(navController: NavController, journeyViewModel: JourneyViewModel, b
             )
         )
 
-        Row()
+        Button(onClick = {
+            navController.navigate("JourneyMapLocationFinder")
+        }
+        )
         {
-            TextField(value = text, onValueChange = { newValue -> text = newValue },
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(), placeholder = { Text("Add location") })
+            Text("Select Location")
         }
 
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(15.dp))
-
-        Row()
-        {
-            TextField(value = Text,
-                onValueChange = { newValue -> Text = newValue },
-                modifier = Modifier.padding(8.dp).fillMaxWidth(),
-                placeholder = { Text("Add Description") })
-        }
+        TextField(value = journeyNameText, onValueChange = { newValue -> journeyNameText = newValue},
+            modifier = Modifier.padding(8.dp).fillMaxWidth(), placeholder = {Text("Name of Journey")})
 
         Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
 
         Button(onClick = {
-            val newJourney = Journey(text.text)
-            journeyViewModel.addJourney(newJourney)
+            //runBlocking { currentLocationJob.join() }
+            returnLocation.latitude = locationParam.latitude
+            returnLocation.longitude = locationParam.longitude
+            JourneysList.add(Journey(
+                name = journeyNameText.text,
+                location = returnLocation,
+                spots = ArrayList<Spot>()))
             scope.launch {
                 navController.navigate("My Journeys")
             }
+
         }) {
             Text("Save")
         }
+
+        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
+
 
     }
 }

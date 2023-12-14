@@ -29,11 +29,12 @@ data class Metamodel(
 )
 
 
-data class Journey(val name: String)
 
-data class trippoints(val location: Location)
 
 class JourneyViewModel : ViewModel() {
+
+
+
     private val _journeys = mutableStateOf(listOf<Journey>())
     val journeys: State<List<Journey>> = _journeys
 

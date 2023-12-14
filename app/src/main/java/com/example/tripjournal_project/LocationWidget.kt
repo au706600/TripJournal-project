@@ -15,7 +15,7 @@ fun LocationWidget(service: LocationService) {
         mutableStateOf<Location?>(null)
     }
     LaunchedEffect(key1 = Unit) {
-        location.value = service.getCurrentLocation()
+        location.value = service.getCurrentLocation(Location(""))
     }
 
     Column {

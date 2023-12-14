@@ -2,7 +2,6 @@ package com.example.tripjournal_project
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -29,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,15 +36,21 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 
-fun MyJourneys(navController: NavController,journeyViewModel: JourneyViewModel, back:()->Unit)
+fun JourneyView(
+    navController: NavController,
+    JourneysList : ArrayList<Journey>,
+    journeyViewModel: JourneyViewModel,
+    activeJourneyID: activeJourneyID,
+    back:()->Unit)
 {
+    val journeyIndex = activeJourneyID.ID
+
     val scope = rememberCoroutineScope()
     Column(modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally)
     {
-
         TopAppBar(
             title = {
                 Row(
@@ -57,7 +61,7 @@ fun MyJourneys(navController: NavController,journeyViewModel: JourneyViewModel, 
                         Icon(Icons.Filled.ArrowBack, contentDescription = "back")
                     }
                     Text(
-                        text = "My Journeys",
+                        text = JourneysList[journeyIndex].name,
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center)
@@ -69,33 +73,53 @@ fun MyJourneys(navController: NavController,journeyViewModel: JourneyViewModel, 
             )
         )
 
-        var journeys by remember { mutableStateOf<List<Journey>>(emptyList()) }
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(20.dp)
+            .background(color = Color.White)
+        )
 
-        LaunchedEffect(journeyViewModel.journeys) {
-            journeys = journeyViewModel.journeys.value
+        Button(onClick = {
+            scope.launch {
+                navController.navigate("Add Spot")
+            }
+        })
+        {
+            Text("Add Spot")
         }
+
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(20.dp)
+            .background(color = Color.White)
+        )
 
         LazyColumn(modifier = Modifier
             .fillMaxWidth()
-            .background(color = Color.LightGray)
+            .background(color = Color.White)
         ) {
-            items(journeys) { journey ->
-                Text(text = journey.name)
-                Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
+            items(JourneysList[journeyIndex].spots) { spot ->
+                Text(text = spot.name)
+                Text(text = spot.activity)
+                Spacer(modifier = Modifier
+                    .background(color = Color.White)
+                    .fillMaxWidth()
+                    .height(20.dp))
             }
         }
 
         Spacer(modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp))
+            .height(20.dp)
+            .background(color = Color.White)
+        )
 
         Button(onClick = {
             scope.launch {
-                navController.navigate("Add Journey")
+                navController.navigate("Map")
             }
-        })
-        {
-            Text("Add Journey")
+        }) {
+            Text("Show Map")
         }
     }
 }

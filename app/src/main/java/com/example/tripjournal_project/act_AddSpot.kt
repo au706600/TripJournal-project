@@ -1,6 +1,7 @@
 package com.example.tripjournal_project
 
 import android.location.Location
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,21 +31,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 
-class SharedViewmodel: ViewModel()
-{
-    val userlocation = MutableLiveData<Location>()
-}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddJourney(navController: NavController, back:()->Unit) {
+fun AddSpot(
+    navController: NavController,
+    journeyViewModel: JourneyViewModel,
+    JourneysList: ArrayList<Journey>,
+    activeJourneyID: activeJourneyID,
+    locationService: LocationService,
+    locationParam: Location,
+    back:()-> Unit)
+{
     val scope = rememberCoroutineScope()
-    var text by remember { mutableStateOf(TextFieldValue("")) }
-    var location by remember{ mutableStateOf<Location?>(null) }
+    var nameText by remember{ mutableStateOf(TextFieldValue("")) }
+    var activityText by remember{ mutableStateOf(TextFieldValue("")) }
+    var returnLocation = Location("")
+    // var currentLocationJob = runBlocking { launch { locationService.getCurrentLocation(currentLocation) } }
 
     Column(
         modifier = Modifier
@@ -64,7 +69,7 @@ fun AddJourney(navController: NavController, back:()->Unit) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "back")
                     }
                     Text(
-                        text = "Add Journey",
+                        text = "Journeys",
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center)
@@ -76,39 +81,55 @@ fun AddJourney(navController: NavController, back:()->Unit) {
             )
         )
 
-        TextField(value = text, onValueChange = {newValue -> text = newValue},
-            modifier = Modifier.padding(8.dp).fillMaxWidth(), placeholder = {Text("Name of Journey")})
-
-        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
-
-
-
         Button(onClick = {
-            scope.launch {
-                navController.navigate("Journeys")
-            }
-        }) {
-            Text("Save")
+            navController.navigate("SpotMapLocationFinder")
         }
-
-        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
-
-        Button(onClick = {
-            scope.launch { navController.navigate("Map") }
-        })
+        )
         {
-            Text("Start Journey")
+            Text("Select Location")
         }
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
+        Row()
+        {
+            TextField(value = nameText, onValueChange = { newValue -> nameText = newValue },
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(), placeholder = { Text("Add spot name") })
+        }
 
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(15.dp))
+
+        Row()
+        {
+            TextField(value = activityText,
+                onValueChange = { newValue -> activityText = newValue },
+                modifier = Modifier.padding(8.dp).fillMaxWidth(),
+                placeholder = { Text("Add activity description") })
+        }
+
+
+        Spacer(modifier = Modifier.fillMaxWidth().height(35.dp))
 
         Button(onClick = {
+            // Waiting for current location job to be completed
+            // runBlocking { currentLocationJob.join() }
+            returnLocation.latitude = locationParam.latitude
+            returnLocation.longitude = locationParam.longitude
+            val newSpot = Spot(
+                nameText.text,
+                activityText.text,
+                returnLocation
+            )
+            JourneysList[activeJourneyID.ID].spots.add(newSpot)
             scope.launch {
-                navController.navigate("Map")
+                navController.navigate("JourneyView")
             }
-        }) {
-            Text("Show Map")
+        }
+        )
+        {
+            Text("Save")
         }
 
     }
