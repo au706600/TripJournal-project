@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -99,9 +100,13 @@ fun AddJourney(navController: NavController,
         }
 
         TextField(value = journeyNameText, onValueChange = { newValue -> journeyNameText = newValue},
-            modifier = Modifier.padding(8.dp).fillMaxWidth(), placeholder = {Text("Name of Journey")})
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(), placeholder = {Text("Name of Journey")})
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(15.dp))
 
         Button(onClick = {
             //runBlocking { currentLocationJob.join() }
@@ -120,7 +125,9 @@ fun AddJourney(navController: NavController,
             Text("Save")
         }
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(15.dp))
 
 
     }

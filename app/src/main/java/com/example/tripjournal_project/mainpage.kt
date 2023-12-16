@@ -64,7 +64,7 @@ fun Mainpage(menuItem: List<Metamodel>, onMenuItemClick: (Metamodel) -> Unit)
                     .fillMaxWidth()
                     .weight(1f))
                 {
-                    TopAppBar(title = { Text(text = "Hi James")},
+                    TopAppBar(title = { Text(text = "Hi")},
                         colors = TopAppBarDefaults.smallTopAppBarColors(
                             containerColor = Color.DarkGray,
                             titleContentColor = Color(0xFFD0BCFF)))

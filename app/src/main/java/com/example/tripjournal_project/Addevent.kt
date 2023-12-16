@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -88,6 +89,13 @@ fun AddSpot(
             Text("Select Location")
         }
 
+        Text(text = "Latitude: ".plus(locationParam.latitude))
+        Text(text = "Longitude: ".plus(locationParam.longitude))
+
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(10.dp))
+
         Row()
         {
             TextField(value = nameText, onValueChange = { newValue -> nameText = newValue },
@@ -104,12 +112,16 @@ fun AddSpot(
         {
             TextField(value = activityText,
                 onValueChange = { newValue -> activityText = newValue },
-                modifier = Modifier.padding(8.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
                 placeholder = { Text("Add activity description") })
         }
 
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(35.dp))
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(35.dp))
 
         Button(onClick = {
             // Waiting for current location job to be completed

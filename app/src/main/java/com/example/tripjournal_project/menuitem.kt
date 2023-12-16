@@ -19,9 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
-class JourneyViewModel : ViewModel() {
+class JourneyViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
     private val _journeys = mutableStateOf(listOf<tourney>())
     val journeys: State<List<tourney>> get()= _journeys
 

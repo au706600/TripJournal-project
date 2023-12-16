@@ -86,6 +86,10 @@ fun MyJourneys(navController: NavController,
             )
         )
 
+        LaunchedEffect(journeyViewModel.journeys) {
+            journeys = journeyViewModel.journeys.value
+        }
+
         Spacer(modifier = Modifier
             .fillMaxWidth()
             .height(10.dp)

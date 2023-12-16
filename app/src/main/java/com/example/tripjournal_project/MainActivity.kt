@@ -44,13 +44,18 @@ class MainActivity : ComponentActivity() {
     private lateinit var geoCoder: Geocoder
     private lateinit var service: LocationService
 
-    @SuppressLint("StateFlowValueCalledInComposition")
+    //@SuppressLint("StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mapsClient = LocationServices.getFusedLocationProviderClient(this)
         geoCoder = Geocoder(this, Locale.getDefault())
         service = LocationService(this, mapsClient, geoCoder)
         service.requestPermission()
+
+        val auth = Firebase.auth
+        FirebaseApp.initializeApp(this)
+        val db = FirebaseFirestore.getInstance()
+        val Service = Firestore(db, auth)
 
         // Contains saved journey data
         val JourneysList = ArrayList<tourney>()
@@ -62,15 +67,16 @@ class MainActivity : ComponentActivity() {
         locationParam.longitude = 10.21076
 
         val menuItems = listOf(
-            Metamodel("1", "Share", "Share")
+            Metamodel("1", "My Journeys", "My journeys")
             {
                 println("Clicked")
             },
-            Metamodel("2", "My Journeys", "My journeys")
+            Metamodel("2", "Contact us", "Contact us")
             {
                 println("Clicked")
             },
-            Metamodel("3", "Contact us", "Contact us")
+
+            Metamodel("3", "About us", "About us")
             {
                 println("Clicked")
             },
@@ -90,7 +96,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     //Greeting("Android")
-                    NavHost(navController = navController, startDestination = "mainpage")
+                    NavHost(navController = navController, startDestination = "login")
                     {
 
                         composable("mainpage")
@@ -98,16 +104,17 @@ class MainActivity : ComponentActivity() {
                             Mainpage(menuItem = menuItems, onMenuItemClick = {
                                     selectedItem -> when (selectedItem.id)
                             {
-                                "1" -> {
-                                    navController.navigate("Share")
-                                }
 
-                                "2" -> {
+                                "1" -> {
                                     navController.navigate("My Journeys")
                                 }
 
-                                "3" -> {
+                                "2" -> {
                                     navController.navigate("Contact us")
+                                }
+
+                                "3" -> {
+                                    navController.navigate("About")
                                 }
 
                                 "4" -> {
@@ -115,12 +122,29 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             })
+                        composable("signup")
+                        {
+                            signup(service = Service, nav = navController) {
+                                navController.popBackStack("login", inclusive = false)
+                            }
+                        }
+                        
+                        composable("login")
+                        {
+                            login(service = Service, nav = navController)
                         }
 
                         composable("Share")
                         {
-                            ShareButton()
-                            {
+                            ShareButton(
+                                JourneysList = JourneysList,
+                                activeJourneyID = activeJourneyID
+                            )
+                        }
+
+                        composable("About")
+                        {
+                            About {
                                 navController.popBackStack("mainpage", inclusive = false)
                             }
                         }

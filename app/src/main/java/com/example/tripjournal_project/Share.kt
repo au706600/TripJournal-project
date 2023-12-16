@@ -26,59 +26,45 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShareButton(back:()-> Unit) {
+fun ShareButton(
+    JourneysList: ArrayList<tourney>,
+    activeJourneyID: activeJourneyID
+) {
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    )
-    {
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        // Handle the result if needed
+    }
 
-        TopAppBar(
-            title = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = { back() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "back")
-                    }
-                    Text(
-                        text = "Add Journey",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentSize(Alignment.Center)
-                    )
-                }
-            }, colors = TopAppBarDefaults.smallTopAppBarColors(
-                containerColor = Color.DarkGray,
-                titleContentColor = Color(0xFFD0BCFF)
-            )
-        )
+    Button(
+        onClick = {
+            val journey = JourneysList[activeJourneyID.ID]
 
-        val launcher =
-            rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                // Handle the result if needed
+
+            // Share intent
+            val shareIntent = Intent(ACTION_SEND)
+            shareIntent.type = "text/plain"
+            shareIntent.putExtra(EXTRA_SUBJECT, "A trip to ".plus(journey.name))
+
+            val shareString = "A trip to ".plus(journey.name).plus("\n\nWith stops in:\n")
+
+            for(spot in journey.spots) {
+                shareString
+                    .plus("Spot: ").plus(spot.name)
+                    .plus("\nActivity: ").plus(spot.activity)
+                    .plus("\n")
             }
 
-        Button(
-            onClick = {
-                val shareIntent = Intent(ACTION_SEND)
-                shareIntent.type = "text/plain"
-                shareIntent.putExtra(EXTRA_SUBJECT, "Subject")
-                shareIntent.putExtra(EXTRA_TEXT, "Your shared text here.")
+            shareIntent.putExtra(EXTRA_TEXT, shareString)
 
-                val chooser = Intent.createChooser(shareIntent, "Share")
+            // Create a chooser dialog
+            val chooser = Intent.createChooser(shareIntent, "Share via")
 
-                launcher.launch(chooser)
-            }
-        ) {
-            Text("Share")
+            // Launch the intent with the chooser dialog
+            launcher.launch(chooser)
         }
+    ) {
+        Text("Share via")
     }
 }

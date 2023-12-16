@@ -1,5 +1,8 @@
 package com.example.tripjournal_project
 
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +46,12 @@ fun JourneyView(
     activeJourneyID: activeJourneyID,
     back:()->Unit)
 {
+
+    // Used for sharing to other apps
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        // Handle the result if needed
+    }
+
     val journeyIndex = activeJourneyID.ID
 
     val scope = rememberCoroutineScope()
@@ -94,7 +103,6 @@ fun JourneyView(
             .background(color = Color.White)
         )
 
-
         LazyColumn(modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.LightGray)
@@ -115,13 +123,43 @@ fun JourneyView(
             .background(color = Color.White)
         )
 
-
         Button(onClick = {
             scope.launch {
                 navController.navigate("Map")
             }
         }) {
             Text("Show Map")
+        }
+
+        Button(onClick = {
+            val journey = JourneysList[activeJourneyID.ID]
+
+            // Share intent
+            val shareIntent = Intent(Intent.ACTION_SEND)
+            shareIntent.type = "text/plain"
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "A trip to ".plus(journey.name))
+
+            var shareStringBuilder = StringBuilder()
+            shareStringBuilder.append("A trip to ".plus(journey.name).plus("\n\nWith stops in:\n"))
+
+            for(spot in journey.spots) {
+                shareStringBuilder.append(
+                    "Spot: ".plus(spot.name)
+                        .plus("\nActivity: ").plus(spot.activity)
+                        .plus("\n"))
+            }
+
+            val shareString = shareStringBuilder.toString()
+
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareString)
+
+            // Create a chooser dialog
+            val chooser = Intent.createChooser(shareIntent, "Share via")
+
+            // Launch the intent with the chooser dialog
+            launcher.launch(chooser)
+        }) {
+            Text("Share")
         }
     }
 }

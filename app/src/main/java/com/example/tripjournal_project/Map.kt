@@ -59,7 +59,7 @@ fun Map(activeJourneyID: activeJourneyID, Spots: ArrayList<tourney>, location: L
                         Icon(Icons.Filled.ArrowBack, contentDescription = "back")
                     }
                     Text(
-                        text = "Add Journey",
+                        text = "Journey Map",
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center)
